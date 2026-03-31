@@ -1,0 +1,16 @@
+model,features,accuracy,precision,recall,f1
+RandomForest,hybrid,0.8312,0.8301,0.8312,0.8222
+RandomForest,static,0.8302,0.829,0.8302,0.8211
+LightGBM,hybrid,0.8126,0.8114,0.8126,0.8119
+LightGBM,static,0.8125,0.8113,0.8125,0.8118
+XGBoost,static,0.8244,0.8383,0.8244,0.8062
+XGBoost,hybrid,0.8239,0.8376,0.8239,0.8058
+SVM,static,0.797,0.7995,0.797,0.7981
+SVM,hybrid,0.7831,0.7927,0.7831,0.7866
+LogisticRegression,hybrid,0.7029,0.7614,0.7029,0.7138
+SVM,sequence,0.7251,0.7075,0.7251,0.7046
+LightGBM,sequence,0.7207,0.7024,0.7207,0.7035
+RandomForest,sequence,0.724,0.7058,0.724,0.7024
+LogisticRegression,static,0.6852,0.7573,0.6852,0.6968
+XGBoost,sequence,0.7322,0.7417,0.7322,0.6724
+LogisticRegression,sequence,0.6677,0.6652,0.6677,0.6663
