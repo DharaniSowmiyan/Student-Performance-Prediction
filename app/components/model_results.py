@@ -38,15 +38,15 @@ def _hex_to_rgba(hex_color: str, alpha: float = 0.07) -> str:
 
 
 def _section(icon, title, subtitle=""):
-    sub_html = f'<div style="font-size:0.72rem;color:#4B5563;">{subtitle}</div>' if subtitle else ""
+    sub_html = f'<div style="font-size:0.95rem;color:#9CA3AF;margin-top:6px;font-weight:400;line-height:1.5;">{subtitle}</div>' if subtitle else ""
     html = (
-        '<div style="display:flex;align-items:center;gap:12px;margin:28px 0 18px 0;'
-        'padding-bottom:12px;border-bottom:1px solid rgba(56,189,248,0.1);">'
-        '<div style="width:36px;height:36px;border-radius:10px;'
+        '<div style="display:flex;align-items:center;gap:14px;margin:32px 0 20px 0;'
+        'padding-bottom:14px;border-bottom:2px solid rgba(56,189,248,0.15);">'
+        '<div style="width:42px;height:42px;border-radius:12px;flex-shrink:0;'
         'background:linear-gradient(135deg,#0EA5E9,#6366F1);'
-        'display:flex;align-items:center;justify-content:center;font-size:0.95rem;'
-        f'box-shadow:0 3px 12px rgba(14,165,233,0.3);">{icon}</div>'
-        f'<div><div style="font-size:1rem;font-weight:700;color:#F1F5F9;">{title}</div>'
+        'display:flex;align-items:center;justify-content:center;font-size:1.1rem;'
+        f'box-shadow:0 4px 16px rgba(14,165,233,0.35);">{icon}</div>'
+        f'<div><div style="font-size:1.45rem;font-weight:700;color:#F1F5F9;letter-spacing:-0.3px;">{title}</div>'
         f'{sub_html}</div></div>'
     )
     st.markdown(html, unsafe_allow_html=True)
@@ -63,13 +63,13 @@ def _divider():
 def show_model_results():
     st.markdown("""
     <div style="padding:8px 0 24px 0;">
-        <div style="font-size:0.65rem;color:#4B5563;text-transform:uppercase;letter-spacing:2.5px;margin-bottom:8px;">Experiment Results</div>
-        <h1 style="font-size:2.2rem;font-weight:800;margin:0;
-                   background:linear-gradient(135deg,#F1F5F9 0%,#34D399 50%,#38BDF8 100%);
+        <div style="font-size:0.65rem;color:#6B7280;text-transform:uppercase;letter-spacing:2.5px;margin-bottom:10px;">Experiment Results</div>
+       <h1 style="font-size:2.4rem;font-weight:800;margin:0;line-height:1.15;
+                   background:linear-gradient(135deg,#F1F5F9 0%,#38BDF8 60%,#6366F1 100%);
                    -webkit-background-clip:text;-webkit-text-fill-color:transparent;">
-            Model Comparison
+            Model Comparision
         </h1>
-        <p style="color:#4B5563;font-size:0.85rem;margin-top:6px;">
+        <p style="color:#9CA3AF;font-size:0.95rem;margin-top:10px;line-height:1.6;">
             5-fold stratified cross-validation results across 5 models × 3 feature sets
         </p>
     </div>
@@ -222,23 +222,30 @@ def show_model_results():
         feat_imp  = os.path.join(fig_dir, "feature_importance.png")
         confusion = os.path.join(fig_dir, "confusion_matrix.png")
 
+        st.markdown("<br>", unsafe_allow_html=True)
         cols_fig = st.columns(2)
         if os.path.exists(feat_imp):
             with cols_fig[0]:
                 st.markdown(
-                    '<p style="font-size:.75rem;color:#4B5563;text-transform:uppercase;'
-                    'letter-spacing:1.5px;margin-bottom:8px;">Feature Importance</p>',
+                    '<div style="background:rgba(17,24,39,0.6);border:1px solid rgba(56,189,248,0.1);'
+                    'border-radius:14px;padding:18px 18px 14px 18px;">'
+                    '<p style="font-size:.85rem;font-weight:600;color:#D1D5DB;text-transform:uppercase;'
+                    'letter-spacing:1.5px;margin:0 0 14px 0;">Feature Importance</p>',
                     unsafe_allow_html=True,
                 )
                 st.image(feat_imp, use_container_width=True)
+                st.markdown('</div>', unsafe_allow_html=True)
         if os.path.exists(confusion):
             with cols_fig[1]:
                 st.markdown(
-                    '<p style="font-size:.75rem;color:#4B5563;text-transform:uppercase;'
-                    'letter-spacing:1.5px;margin-bottom:8px;">Confusion Matrix</p>',
+                    '<div style="background:rgba(17,24,39,0.6);border:1px solid rgba(56,189,248,0.1);'
+                    'border-radius:14px;padding:18px 18px 14px 18px;">'
+                    '<p style="font-size:.85rem;font-weight:600;color:#D1D5DB;text-transform:uppercase;'
+                    'letter-spacing:1.5px;margin:0 0 14px 0;">Confusion Matrix</p>',
                     unsafe_allow_html=True,
                 )
                 st.image(confusion, use_container_width=True)
+                st.markdown('</div>', unsafe_allow_html=True)
 
     except Exception as e:
         st.error("⚠️  Model results not found. Run the model training notebook first.")

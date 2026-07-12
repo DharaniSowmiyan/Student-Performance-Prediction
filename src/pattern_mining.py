@@ -2,17 +2,12 @@ import pandas as pd
 from prefixspan import PrefixSpan
 
 
-# ─── LOAD ─────────────────────────────────────────────────────────────────────
 def load_student_sequences(processed_path: str) -> pd.DataFrame:
     return pd.read_csv(processed_path + "student_sequences.csv")
 
 
-# ─── SPLIT ────────────────────────────────────────────────────────────────────
 def split_by_group(student_sequences: pd.DataFrame):
-    """
-    Splits student sequences into High and Low performance groups.
-    Returns two lists of lists (PrefixSpan input format).
-    """
+   
     high_df = student_sequences[student_sequences["performance_group"] == "High"]
     low_df  = student_sequences[student_sequences["performance_group"] == "Low"]
 
@@ -22,14 +17,9 @@ def split_by_group(student_sequences: pd.DataFrame):
     return high_sequences, low_sequences
 
 
-# ─── MINE ─────────────────────────────────────────────────────────────────────
-def mine_patterns(sequences: list, min_support: int, max_length: int = 4) -> list:
-    """
-    Runs PrefixSpan on a list of sequences.
 
-    Returns list of (support, pattern) tuples.
-    Filters to patterns of length <= max_length.
-    """
+def mine_patterns(sequences: list, min_support: int, max_length: int = 4) -> list:
+  
     ps = PrefixSpan(sequences)
     patterns = ps.frequent(
         min_support,
@@ -38,24 +28,13 @@ def mine_patterns(sequences: list, min_support: int, max_length: int = 4) -> lis
     return patterns
 
 
-# ─── BUILD RESULTS TABLE ──────────────────────────────────────────────────────
 def build_pattern_table(
     patterns_high: list,
     patterns_low: list,
     n_high: int,
     n_low: int,
 ) -> pd.DataFrame:
-    """
-    Combines High and Low patterns into a single comparison table.
-
-    Columns:
-        pattern           — comma-joined category sequence
-        support_high      — absolute count in High group
-        support_low       — absolute count in Low group
-        support_high_pct  — relative support in High group (%)
-        support_low_pct   — relative support in Low group (%)
-        difference        — support_high_pct - support_low_pct
-    """
+   
     high_dict = {tuple(patt): sup for sup, patt in patterns_high}
     low_dict  = {tuple(patt): sup for sup, patt in patterns_low}
 
@@ -83,23 +62,12 @@ def build_pattern_table(
     return df
 
 
-# ─── SELECT DISCRIMINATIVE PATTERNS (Day 7) ───────────────────────────────────
 def select_discriminative_patterns(
     pattern_table: pd.DataFrame,
     top_n: int = 10,
     min_diff: float = 5.0,
 ) -> pd.DataFrame:
-    """
-    Selects the most discriminative patterns from the full pattern table.
-
-    Args:
-        pattern_table  — output of build_pattern_table()
-        top_n          — how many patterns to pick from each side (default 10)
-        min_diff       — minimum absolute difference threshold (default 5.0%)
-
-    Returns DataFrame with columns:
-        pattern, support_high_pct, support_low_pct, difference, group
-    """
+    
     filtered = pattern_table[pattern_table["difference"].abs() >= min_diff].copy()
 
     top_high = (
@@ -124,21 +92,13 @@ def select_discriminative_patterns(
     return selected
 
 
-# ─── FULL PIPELINE ────────────────────────────────────────────────────────────
 def run_pattern_mining(
     processed_path: str,
     results_path: str,
     min_support_pct: float = 0.30,
     max_length: int = 4,
 ) -> pd.DataFrame:
-    """
-    End-to-end pipeline:
-        1. Load student_sequences.csv
-        2. Split into High / Low groups
-        3. Mine patterns with PrefixSpan
-        4. Build comparison table
-        5. Save to results/patterns.csv
-    """
+    
     student_sequences = load_student_sequences(processed_path)
     high_sequences, low_sequences = split_by_group(student_sequences)
 

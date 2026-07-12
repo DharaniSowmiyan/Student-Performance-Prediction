@@ -1,16 +1,11 @@
 import pandas as pd
-
-
 def load_clean_logs(processed_path: str) -> pd.DataFrame:
     logs = pd.read_csv(processed_path + "clean_logs.csv")
     return logs
 
-
 def build_sequences(logs: pd.DataFrame) -> pd.DataFrame:
-    # Step 1 — sort chronologically (negative dates first = pre-course)
     logs = logs.sort_values(["id_student", "date"]).reset_index(drop=True)
 
-    # Step 2 — group activity_category into ordered list per student
     sequences = (
         logs.groupby("id_student")["activity_category"]
         .apply(list)
@@ -18,7 +13,6 @@ def build_sequences(logs: pd.DataFrame) -> pd.DataFrame:
         .rename(columns={"activity_category": "sequence_list"})
     )
 
-    # Step 3 — extract performance label (same value for all rows of a student)
     labels = (
         logs.groupby("id_student")["final_result"]
         .first()
@@ -26,15 +20,12 @@ def build_sequences(logs: pd.DataFrame) -> pd.DataFrame:
         .rename(columns={"final_result": "performance_label"})
     )
 
-    # Step 4 — merge sequences with labels
     student_sequences = sequences.merge(labels, on="id_student")
 
-    # Step 5 — convert list → comma-separated string for CSV storage
     student_sequences["sequence"] = student_sequences["sequence_list"].apply(
         lambda x: ",".join(x)
     )
 
-    # Step 6 — drop the intermediate list column, reorder
     student_sequences = student_sequences[
         ["id_student", "sequence", "performance_label"]
     ]
@@ -51,13 +42,6 @@ def get_sequence_lengths(student_sequences: pd.DataFrame) -> pd.Series:
 
 
 def apply_performance_grouping(student_sequences: pd.DataFrame) -> pd.DataFrame:
-    """
-    Maps binary performance_label to performance_group.
-
-    Mapping:
-        Pass → High
-        Fail → Low
-    """
     mapping = {
         "Pass": "High",
         "Fail": "Low",

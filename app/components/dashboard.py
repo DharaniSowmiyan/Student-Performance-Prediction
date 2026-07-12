@@ -3,7 +3,6 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 
-# ─── COLOUR PALETTE ───────────────────────────────────────────────────────────
 BG       = "#0B0F19"
 CARD_BG  = "rgba(17,24,39,0.85)"
 PASS_COLOR = "#34D399"
@@ -23,17 +22,16 @@ CHART_THEME = dict(
 )
 
 
-# ─── HELPERS ──────────────────────────────────────────────────────────────────
 def _section(icon: str, title: str, subtitle: str = ""):
-    sub_html = f'<div style="font-size:0.72rem;color:#4B5563;margin-top:1px;">{subtitle}</div>' if subtitle else ""
+    sub_html = f'<div style="font-size:0.95rem;color:#9CA3AF;margin-top:6px;font-weight:400;line-height:1.5;">{subtitle}</div>' if subtitle else ""
     html = (
-        '<div style="display:flex;align-items:center;gap:12px;margin:28px 0 18px 0;'
-        'padding-bottom:12px;border-bottom:1px solid rgba(56,189,248,0.1);">'
-        '<div style="width:36px;height:36px;border-radius:10px;'
+        '<div style="display:flex;align-items:center;gap:14px;margin:32px 0 20px 0;'
+        'padding-bottom:14px;border-bottom:2px solid rgba(56,189,248,0.15);">'
+        '<div style="width:42px;height:42px;border-radius:12px;flex-shrink:0;'
         'background:linear-gradient(135deg,#0EA5E9,#6366F1);'
-        'display:flex;align-items:center;justify-content:center;font-size:0.95rem;'
-        f'box-shadow:0 3px 12px rgba(14,165,233,0.3);">{icon}</div>'
-        f'<div><div style="font-size:1rem;font-weight:700;color:#F1F5F9;">{title}</div>'
+        'display:flex;align-items:center;justify-content:center;font-size:1.1rem;'
+        f'box-shadow:0 4px 16px rgba(14,165,233,0.35);">{icon}</div>'
+        f'<div><div style="font-size:1.45rem;font-weight:700;color:#F1F5F9;letter-spacing:-0.3px;">{title}</div>'
         f'{sub_html}</div></div>'
     )
     st.markdown(html, unsafe_allow_html=True)
@@ -42,20 +40,18 @@ def _divider():
     st.markdown('<div style="height:1px;background:linear-gradient(90deg,transparent,rgba(56,189,248,0.2),transparent);margin:8px 0;"></div>', unsafe_allow_html=True)
 
 
-# ─── MAIN ─────────────────────────────────────────────────────────────────────
 def show_dashboard():
-    # Hero
     st.markdown("""
     <div style="padding:8px 0 24px 0;">
-        <div style="font-size:0.65rem;color:#4B5563;text-transform:uppercase;letter-spacing:2.5px;margin-bottom:8px;">
+        <div style="font-size:0.65rem;color:#6B7280;text-transform:uppercase;letter-spacing:2.5px;margin-bottom:10px;">
             Open University Learning Analytics Dataset
         </div>
-        <h1 style="font-size:2.2rem;font-weight:800;margin:0;line-height:1.2;
+        <h1 style="font-size:2.4rem;font-weight:800;margin:0;line-height:1.15;
                    background:linear-gradient(135deg,#F1F5F9 0%,#38BDF8 60%,#6366F1 100%);
                    -webkit-background-clip:text;-webkit-text-fill-color:transparent;">
             Analytics Dashboard
         </h1>
-        <p style="color:#4B5563;font-size:0.85rem;margin-top:6px;">
+        <p style="color:#9CA3AF;font-size:0.95rem;margin-top:10px;line-height:1.6;">
             Real-time insights from student interaction logs and assessment records
         </p>
     </div>
@@ -69,7 +65,6 @@ def show_dashboard():
             student_assessment = pd.read_csv("data/raw/studentAssessment.csv")
             assessments        = pd.read_csv("data/raw/assessments.csv")
 
-        # ── KPI row ───────────────────────────────────────────────────────────
         _section("📊", "Platform Overview", "Key metrics across the entire dataset")
         c1, c2, c3, c4 = st.columns(4)
         c1.metric("Total Students",     f"{student_info['id_student'].nunique():,}")
@@ -79,7 +74,6 @@ def show_dashboard():
 
         _divider()
 
-        # ── Performance ───────────────────────────────────────────────────────
         _section("🎯", "Student Outcome Distribution", "How students finished the course")
         result_counts = student_info["final_result"].value_counts().reset_index()
         result_counts.columns = ["Result", "Count"]
@@ -116,7 +110,6 @@ def show_dashboard():
             fig_pie.update_layout(**CHART_THEME, title="Share by Outcome", showlegend=False)
             st.plotly_chart(fig_pie, use_container_width=True)
 
-        # Badges
         rc    = dict(zip(result_counts["Result"], result_counts["Count"]))
         total = result_counts["Count"].sum()
         badge_styles = {
@@ -136,7 +129,6 @@ def show_dashboard():
 
         _divider()
 
-        # ── Activity types ────────────────────────────────────────────────────
         _section("📚", "Learning Resource Types", "Resources available across the platform")
         activity_counts = vle["activity_type"].value_counts().reset_index()
         activity_counts.columns = ["Activity", "Count"]
@@ -156,7 +148,6 @@ def show_dashboard():
 
         _divider()
 
-        # ── Timeline ──────────────────────────────────────────────────────────
         _section("⏳", "Student Activity Timeline", "Interaction volume by course day")
         timeline = student_vle["date"].value_counts().sort_index().reset_index()
         timeline.columns = ["Day", "Interactions"]
@@ -178,7 +169,6 @@ def show_dashboard():
 
         _divider()
 
-        # ── Click stats ───────────────────────────────────────────────────────
         _section("🖱️", "Click Behaviour Statistics", "Per-interaction click distribution")
         desc  = student_vle["sum_click"].describe()
         stats = [("Min", f'{desc["min"]:.0f}'), ("25%", f'{desc["25%"]:.0f}'),
@@ -206,7 +196,6 @@ def show_dashboard():
 
         _divider()
 
-        # ── Activity vs Performance ───────────────────────────────────────────
         _section("🔍", "Activity Type vs Student Outcome")
         logs = student_vle.merge(vle, on="id_site", how="left")
         logs = logs.merge(student_info[["id_student", "final_result"]], on="id_student")
@@ -228,7 +217,6 @@ def show_dashboard():
 
         _divider()
 
-        # ── Assessment scores ─────────────────────────────────────────────────
         _section("📝", "Assessment Score Distribution")
         col_s1, col_s2 = st.columns([2, 1])
         with col_s1:
@@ -243,7 +231,7 @@ def show_dashboard():
             st.plotly_chart(fig_sc, use_container_width=True)
 
         with col_s2:
-            st.markdown('<p style="font-size:.72rem;font-weight:600;color:#4B5563;text-transform:uppercase;letter-spacing:1.4px;margin-bottom:10px;">Score Summary</p>', unsafe_allow_html=True)
+            st.markdown('<p style="font-size:.8rem;font-weight:600;color:#9CA3AF;text-transform:uppercase;letter-spacing:1.4px;margin-bottom:10px;">Score Summary</p>', unsafe_allow_html=True)
             st.dataframe(
                 student_assessment["score"].describe().round(2).to_frame().rename(columns={"score": "Value"}),
                 use_container_width=True,
@@ -251,7 +239,6 @@ def show_dashboard():
 
         _divider()
 
-        # ── Data Quality ──────────────────────────────────────────────────────
         _section("🧹", "Data Quality — Missing Values")
         datasets = {
             "studentVle": student_vle, "studentInfo": student_info,
@@ -273,7 +260,6 @@ def show_dashboard():
 
         _divider()
 
-        # ── Sample data ───────────────────────────────────────────────────────
         _section("🔎", "Sample Interaction Records")
         st.dataframe(student_vle.head(200), use_container_width=True, hide_index=True)
 

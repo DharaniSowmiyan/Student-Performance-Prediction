@@ -1,6 +1,5 @@
 import streamlit as st
 
-# ── MUST be first ─────────────────────────────────────────────────────────────
 st.set_page_config(
     page_title="LMS Intelligence · OULAD",
     page_icon="🎓",
@@ -8,10 +7,11 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-from components.dashboard  import show_dashboard
-from components.patterns   import show_patterns
-from components.prediction import show_prediction
+from components.dashboard     import show_dashboard
+from components.patterns      import show_patterns
+from components.prediction    import show_prediction
 from components.model_results import show_model_results
+
 
 def _inject_global_css():
     st.markdown(
@@ -39,9 +39,7 @@ def _inject_global_css():
 
 _inject_global_css()
 
-# ── Sidebar ───────────────────────────────────────────────────────────────────
 with st.sidebar:
-    # Logo / Brand
     st.markdown("""
     <div style="padding:28px 16px 20px 16px; border-bottom:1px solid rgba(56,189,248,0.1); margin-bottom:16px;">
         <div style="display:flex;align-items:center;gap:12px;">
@@ -53,17 +51,17 @@ with st.sidebar:
             </div>
             <div>
                 <div style="font-size:1.05rem;font-weight:800;color:#F1F5F9;line-height:1.2;">LMS Intelligence</div>
-                <div style="font-size:0.65rem;color:#4B5563;letter-spacing:1.5px;text-transform:uppercase;margin-top:2px;">OULAD · Analytics</div>
+                <div style="font-size:0.65rem;color:#6B7280;letter-spacing:1.5px;text-transform:uppercase;margin-top:2px;">OULAD · Analytics</div>
             </div>
         </div>
     </div>
     """, unsafe_allow_html=True)
 
-    st.markdown('<p style="font-size:0.6rem;color:#374151;text-transform:uppercase;letter-spacing:2px;margin-left:4px;margin-bottom:6px;">Navigation</p>', unsafe_allow_html=True)
+    st.markdown('<p style="font-size:0.65rem;color:#9CA3AF;text-transform:uppercase;letter-spacing:2px;margin-left:4px;margin-bottom:6px;"></p>', unsafe_allow_html=True)
 
     page = st.radio(
         "page",
-        ["📊  Dashboard", "🔍  Pattern Engine", "📈  Model Results", "🤖  Live Prediction"],
+        ["  Dashboard", "  Pattern Engine", "  Model Results", "  Live Prediction"],
         label_visibility="collapsed",
     )
 
@@ -71,7 +69,7 @@ with st.sidebar:
     <div style="position:fixed;bottom:20px;left:0;width:240px;padding:0 16px;">
         <div style="background:rgba(17,24,39,0.6);border:1px solid rgba(56,189,248,0.1);
                     border-radius:12px;padding:12px 14px;">
-            <div style="font-size:0.62rem;color:#374151;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:4px;">Model Status</div>
+            <div style="font-size:0.62rem;color:#9CA3AF;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:4px;">Model Status</div>
             <div style="display:flex;align-items:center;gap:8px;">
                 <div style="width:8px;height:8px;border-radius:50%;background:#4ADE80;
                             box-shadow:0 0 8px #4ADE80;animation:pulse 2s infinite;"></div>
@@ -84,7 +82,6 @@ with st.sidebar:
     </style>
     """, unsafe_allow_html=True)
 
-# ── Route ─────────────────────────────────────────────────────────────────────
 if "Dashboard" in page:
     show_dashboard()
 elif "Pattern" in page:

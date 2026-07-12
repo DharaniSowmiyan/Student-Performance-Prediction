@@ -19,7 +19,6 @@ def plot_feature_importance():
     if hasattr(clf, "feature_importances_"):
         importances = clf.feature_importances_
         
-        # Sort features and pick top 20
         indices = np.argsort(importances)[::-1][:20]
         top_cols = [cols[i] for i in indices]
         top_importances = importances[indices]
@@ -49,7 +48,6 @@ def plot_pattern_frequency():
         
     df = pd.read_csv(csv_path)
     
-    # Sort to get the highest differences first and cap at 15 for readability
     df["abs_diff"] = df["difference"].abs()
     df = df.sort_values(by="abs_diff", ascending=False).head(15)
     
@@ -66,7 +64,6 @@ def plot_pattern_frequency():
     ax.set_title('Top Discriminative Patterns Frequency (High vs Low Performers)')
     ax.set_yticks(index)
     
-    # Clean pattern names by putting newlines after commas if too long
     labels = [p.replace(',', ',\n') if len(p) > 30 else p for p in df["pattern"]]
     ax.set_yticklabels(labels)
     

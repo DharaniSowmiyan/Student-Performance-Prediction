@@ -17,14 +17,7 @@ from xgboost import XGBClassifier
 from lightgbm import LGBMClassifier
 
 
-# ─── FEATURE COLUMN GROUPS ────────────────────────────────────────────────────
 def get_feature_columns(features: pd.DataFrame):
-    """
-    Returns three lists of column names:
-        static_cols   — aggregate click / interaction counts
-        sequence_cols — binary pattern flags (pat_*)
-        hybrid_cols   — both combined
-    """
     exclude = {"id_student", "performance_group", "performance_label"}
 
     static_cols = [
@@ -40,21 +33,8 @@ def get_feature_columns(features: pd.DataFrame):
     return static_cols, sequence_cols, hybrid_cols
 
 
-# ─── BUILD MODELS ─────────────────────────────────────────────────────────────
 def build_models():
-    """
-    Returns a dict of model name → sklearn Pipeline.
-    StandardScaler is included so LR, SVM, and neural models get scaled input.
-    class_weight='balanced' / scale_pos_weight handles the 69/31 class imbalance.
-    Models included:
-        - LogisticRegression  : linear baseline
-        - RandomForest        : ensemble baseline
-        - XGBoost             : gradient boosting (scale_pos_weight for imbalance)
-        - LightGBM            : fast gradient boosting
-        - SVM                 : RBF kernel, strong on high-dim binary features
-    """
-    # Ratio of negative to positive samples for XGBoost imbalance handling
-    _neg_pos_ratio = 69 / 31  # approx class distribution
+    _neg_pos_ratio = 69 / 31
 
     return {
         "LogisticRegression": Pipeline([
@@ -111,12 +91,7 @@ def build_models():
     }
 
 
-# ─── EVALUATE WITH CROSS-VALIDATION ──────────────────────────────────────────
 def evaluate_model_cv(model, X, y, cv=5):
-    """
-    Runs stratified k-fold cross-validation.
-    Returns mean accuracy, precision, recall, f1 across folds.
-    """
     scoring = ["accuracy", "precision_weighted", "recall_weighted", "f1_weighted"]
 
     cv_results = cross_validate(
@@ -134,13 +109,7 @@ def evaluate_model_cv(model, X, y, cv=5):
     }
 
 
-# ─── RUN ALL EXPERIMENTS ──────────────────────────────────────────────────────
 def run_all_experiments(features: pd.DataFrame, cv: int = 5) -> pd.DataFrame:
-    """
-    Trains every model × every feature set combination using cross-validation.
-
-    Returns a DataFrame with one row per (model, feature_set) combination.
-    """
     y = (features["performance_group"] == "High").astype(int)
 
     static_cols, sequence_cols, hybrid_cols = get_feature_columns(features)
@@ -176,22 +145,12 @@ def run_all_experiments(features: pd.DataFrame, cv: int = 5) -> pd.DataFrame:
     return results
 
 
-# ─── TRAIN & SAVE BEST MODEL ──────────────────────────────────────────────────
 def train_and_save_best_model(
     features: pd.DataFrame,
     results: pd.DataFrame,
     save_path: str,
 ) -> dict:
-    """
-    Trains the best model (highest F1) on the full dataset and saves it.
-
-    Saves:
-        results/best_model.pkl  — the fitted pipeline
-        results/best_model_info.csv — metadata about which model was chosen
-
-    Returns a dict with model name, feature set, and metrics.
-    """
-    best_row = results.iloc[0]
+    best_row   = results.iloc[0]
     model_name = best_row["model"]
     feat_name  = best_row["features"]
 
@@ -229,16 +188,11 @@ def train_and_save_best_model(
     return model_data
 
 
-# ─── CONFUSION MATRIX ─────────────────────────────────────────────────────────
 def get_confusion_matrix(
     features: pd.DataFrame,
     model_name: str,
     feat_name: str,
 ) -> np.ndarray:
-    """
-    Fits the chosen model on 80% of data and returns confusion matrix on 20%.
-    Used for visualisation only.
-    """
     from sklearn.model_selection import train_test_split
 
     static_cols, sequence_cols, hybrid_cols = get_feature_columns(features)
