@@ -212,8 +212,4 @@ streamlit run app/app.py
 - [TODO] Containerize the app (Docker) and add CI for automated retraining/evaluation.
 - [TODO] Add unit tests for `src/` pipeline modules.
 
----
 
-## 📄 License
-
-`[TODO]`
